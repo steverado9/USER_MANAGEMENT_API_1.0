@@ -7,6 +7,7 @@ export const config = {
     USER: process.env.DB_USER!,
     PASSWORD: process.env.DB_PASSWORD!,
     DB: process.env.DB_NAME!,
+    SECRETE: process.env.SECRETE!,
     pool: {
         max: 5,
         min: 0,

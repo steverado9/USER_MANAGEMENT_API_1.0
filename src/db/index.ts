@@ -30,7 +30,7 @@ class Database {
         try {
             await this.sequelize.authenticate();
             // Drops all tables and re-creates them on every server start.
-            await this.sequelize.sync({ force: true });
+            await this.sequelize.sync();
             console.log("connection has been established successfully.")
             // Call seedRoles after syncing
             await this.seedRoles();

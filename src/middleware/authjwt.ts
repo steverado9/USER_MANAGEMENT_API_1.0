@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import config from "../config/auth.config";
+import { config } from "../config/db.config";
 import User from "../models/user.model";
 import Role from "../models/role.model";
 import handleResponse from "../response/handleResponse";
@@ -7,22 +7,25 @@ import Jwt from "jsonwebtoken";
 
 const verifyToken = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-        const token = req.headers["x-access-token"] as string;
+        const token = (req.headers["authorization"] as string).split(" ")[1]; // token: "bearer xyz"
 
         if (!token) {
             handleResponse(res, 403, "No token provided!");
             return;
         }
 
-        Jwt.verify(token, config.secret, (err, decoded: any) => {
+        Jwt.verify(token, config.SECRETE, (err, decoded: any) => {
             if (err) {
+                console.error("err = >" , err);
                 handleResponse(res, 401, "Unauthorized!");
                 return;
             }
+            console.log(" decoded = >", decoded);
             req.userId = decoded.id;
             next();
         });
     } catch (err) {
+        console.error("err => ", err );
         handleResponse(res, 500, "Internal Server Error");
     }
 };

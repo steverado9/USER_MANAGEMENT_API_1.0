@@ -2,14 +2,17 @@ import { Request, Response } from "express";
 import User from "../models/user.model";
 import handleResponse from "../response/handleResponse";
 import Role from "../models/role.model";
-import config from "../config/auth.config";
+import { config } from "../config/db.config";
 import { Op } from "sequelize";
 import Jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 
+
+
 export default class UserController {
     //create a user
     async signup(req: Request, res: Response) {
+        console.log("signup");
         const {
             name, username, email, password, address, phone, website, company, roles, // Optional array of role names (e.g., ['admin', 'user'])
         } = req.body;
@@ -28,7 +31,7 @@ export default class UserController {
                 address,
                 phone,
                 website,
-                company,
+                company
             });
 
             // Assign roles
@@ -40,8 +43,19 @@ export default class UserController {
             } else {
                 await user.$set("roles", [1]); // Default to role ID 1
             }
+            res.status(201).json({
+                message: "User created successfully",
+                data: {
+                    name: user.name,
+                    username: user.username,
+                    email: user.email,
+                    address: user.address,
+                    phone: user.phone,
+                    website: user.website,
+                    company: user.company,
+                }
+            });
 
-            handleResponse(res, 201, "User registered successfully");
         } catch (err) {
             console.error("Signup error:", err);
             handleResponse(res, 500, "Internal Server Error");
@@ -50,6 +64,7 @@ export default class UserController {
 
     //find all users
     async findAll(req: Request, res: Response) {
+        console.log("findall");
         const usernameQuery = typeof req.query.username === "string" ? req.query.username : "";
 
         try {
@@ -60,7 +75,11 @@ export default class UserController {
                 }
             } : {};
 
-            const users = await User.findAll({ where: condition });
+            const users = await User.findAll({
+                where: condition,
+                attributes: { exclude: ['password'] }
+            });
+            console.log("users => ", users);
 
             handleResponse(res, 200, "Users fetched successfully", users);
         } catch (err) {
@@ -70,6 +89,8 @@ export default class UserController {
     }
 
     async signin(req: Request, res: Response) {
+        console.log("signin = > ");
+
         try {
             const user = await User.findOne({
                 where: { username: req.body.username },
@@ -85,11 +106,18 @@ export default class UserController {
                 return handleResponse(res, 401, "Invalid password!");
             }
 
-            const token = Jwt.sign({ id: user.id }, config.secret, {
+            const token = Jwt.sign({
+                id: user.id,
+                username: user.username,
+                email: user.email,
+                role: user.roles[0].name 
+
+            }, config.SECRETE, {
                 algorithm: "HS256",
                 allowInsecureKeySizes: true,
                 expiresIn: 86400, // 24 hours
             });
+            console.log("token = > ", token);
 
             const authorities: string[] = [];
             const roles = user.roles as Role[]; // Type assertion
@@ -105,10 +133,6 @@ export default class UserController {
                 name: user.name,
                 username: user.username,
                 email: user.email,
-                address: user.address,
-                phone: user.phone,
-                website: user.website,
-                company: user.company,
                 roles: authorities,
                 accessToken: token,
             });
@@ -131,7 +155,7 @@ export default class UserController {
             const [updatedCount] = await User.update(req.body, { where: { id: userId } });
 
             if (updatedCount !== 1) {
-                return handleResponse(res, 404, `Cannot update user with id=${userId}`);
+                return handleResponse(res, 404, `user with id = ${userId} does not exist`);
             }
 
             // Find the updated user instance

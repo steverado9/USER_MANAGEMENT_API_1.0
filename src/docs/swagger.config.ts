@@ -13,6 +13,16 @@ const options = {
                 url: "http://localhost:8080/api", // base URL
             },
         ],
+        components: {
+            securitySchemes: {
+                bearerAuth: {
+                    type: "http",
+                    scheme: "bearer",
+                    bearerFormat: "JWT"
+                }
+            }
+        }
+            
     },
     apis: ["./src/routes/**/*.ts"], // path to your route files
 };

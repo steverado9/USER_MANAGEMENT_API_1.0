@@ -3,6 +3,7 @@ import UserController from "../controllers/user.controller";
 import verifySignUp from "../middleware/verifyUsernameAndEmail";
 import { validate } from "../middleware/validate";
 import { signupSchema, signinSchema, updateUserSchema } from "../validation/user.validation";
+import authjwt from "../middleware/authjwt";
 
 class UserRoutes {
     router = Router();
@@ -71,6 +72,8 @@ class UserRoutes {
         * @swagger
         * /users:
         *   get:
+        *     security: 
+        *       - bearerAuth: []
         *     summary: Retrieve all users
         *     tags: [Users]
         *     parameters:
@@ -86,7 +89,7 @@ class UserRoutes {
         *       500:
         *         description: Internal server error
         */
-        this.router.get("/", this.usercontroller.findAll);
+        this.router.get("/", authjwt.verifyToken, authjwt.isAdmin, this.usercontroller.findAll);
 
         //signin a single user
         /**
