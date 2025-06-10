@@ -60,7 +60,6 @@ class Database {
     }
 
     private async seedUsers(): Promise<void> {
-        console.log("seedUsers = >");
         try {
             const UserModel = this.sequelize.models.User as typeof User;
 

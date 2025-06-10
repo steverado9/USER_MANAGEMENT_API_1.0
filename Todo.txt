@@ -1,6 +1,0 @@
-add authorization to update and delete
-only an admin can update and delete 
-deploy
-remember to add force true before i deploy
-search console.log and remove them
-

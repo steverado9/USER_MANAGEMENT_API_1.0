@@ -4,7 +4,6 @@ import User from "../models/user.model";
 import Role from "../models/role.model";
 
 const checkDuplicateUsernameOrEmail = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    console.log("checkDuplicateUsernameOrEmail");
     try {
         const { username, email } = req.body;
         // check if username exist
@@ -29,7 +28,6 @@ const checkDuplicateUsernameOrEmail = async (req: Request, res: Response, next: 
 }
 
 const checkValidRole = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    console.log("checkValidRole");
     try {
         const VALID_ROLES = Role.VALID_ROLES;
         const roles = req.body.roles;

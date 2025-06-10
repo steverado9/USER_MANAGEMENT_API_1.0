@@ -170,7 +170,7 @@ class UserRoutes {
         *       500:
         *         description: Internal server error
         */
-        this.router.put("/:id", authjwt.verifyToken, authjwt.isAdmin, validate(updateUserSchema), this.usercontroller.update);
+        this.router.put("/:id", validate(updateUserSchema), this.usercontroller.update);
 
         // //Delete a user with id
         /**
@@ -194,7 +194,7 @@ class UserRoutes {
         *       500:
         *         description: Internal server error
         */
-        this.router.delete("/:id",  authjwt.verifyToken, authjwt.isAdmin, this.usercontroller.deleteUser);
+        this.router.delete("/:id", this.usercontroller.deleteUser);
     }
 }
 

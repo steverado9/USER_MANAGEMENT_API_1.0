@@ -12,7 +12,6 @@ import bcrypt from "bcryptjs";
 export default class UserController {
     //create a user
     async signup(req: Request, res: Response) {
-        console.log("signup");
         const {
             name, username, email, password, address, phone, website, company, roles, // Optional array of role names (e.g., ['admin', 'user'])
         } = req.body;
@@ -64,7 +63,6 @@ export default class UserController {
 
     //find all users
     async findAll(req: Request, res: Response) {
-        console.log("findall");
         const usernameQuery = typeof req.query.username === "string" ? req.query.username : "";
 
         try {
@@ -79,7 +77,6 @@ export default class UserController {
                 where: condition,
                 attributes: { exclude: ['password'] }
             });
-            console.log("users => ", users);
 
             handleResponse(res, 200, "Users fetched successfully", users);
         } catch (err) {
@@ -89,7 +86,6 @@ export default class UserController {
     }
 
     async signin(req: Request, res: Response) {
-        console.log("signin = > ");
 
         try {
             const user = await User.findOne({
@@ -117,7 +113,6 @@ export default class UserController {
                 allowInsecureKeySizes: true,
                 expiresIn: 86400, // 24 hours
             });
-            console.log("token = > ", token);
 
             const authorities: string[] = [];
             const roles = user.roles as Role[]; // Type assertion

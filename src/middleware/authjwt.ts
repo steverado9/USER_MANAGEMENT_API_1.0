@@ -20,7 +20,6 @@ const verifyToken = async (req: Request, res: Response, next: NextFunction): Pro
                 handleResponse(res, 401, "Unauthorized!");
                 return;
             }
-            console.log(" decoded = >", decoded);
             req.userId = decoded.id;
             next();
         });
