@@ -143,6 +143,7 @@ export default class UserController {
     };
 
     async update(req: Request, res: Response) {
+        console.log("update => ");
         const userId = parseInt(req.params.id);
 
         try {

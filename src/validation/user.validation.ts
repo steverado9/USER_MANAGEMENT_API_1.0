@@ -6,7 +6,7 @@ export const signupSchema = z.object({
   email: z.string().email("Invalid email"),
   password: z.string().min(6, "Password must be at least 6 characters"),
   address: z.object({}).passthrough().optional(),
-  phone: z.number().lte(11).optional(), //TODO validate number 11 characters
+  phone: z.number().optional(),
   website: z.string().url("Invalid website URL").optional(),
   company: z.object({}).passthrough().optional(),
   roles: z
@@ -25,7 +25,7 @@ export const updateUserSchema = z.object({
   email: z.string().email("Invalid email").optional(),
   password: z.string().min(6).optional(),
   address: z.object({}).passthrough().optional(),
-  phone: z.string().optional(),
+  phone: z.number().optional(),
   website: z.string().url("Invalid website URL").optional(),
   company: z.object({}).passthrough().optional(),
   roles: z.array(z.enum(["user", "admin", "moderator"])).optional(),

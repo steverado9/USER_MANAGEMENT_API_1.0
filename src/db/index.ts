@@ -6,13 +6,13 @@ import Role from "../models/role.model";
 import UserRole from "../models/userRole.model";
 
 class Database {
-    public sequelize: Sequelize | undefined;
+    public sequelize!: Sequelize;
 
     constructor() {
         this.connectToDatabase();
     }
 
-    private async connectToDatabase() {
+    private async connectToDatabase(): Promise<void> {
         this.sequelize = new Sequelize({
             database: config.DB,
             username: config.USER,
@@ -30,30 +30,73 @@ class Database {
         try {
             await this.sequelize.authenticate();
             // Drops all tables and re-creates them on every server start.
-            await this.sequelize.sync();
+            await this.sequelize.sync({ force: true });
             console.log("connection has been established successfully.")
             // Call seedRoles after syncing
+            await this.seedUsers();
             await this.seedRoles();
+            await this.seedUserRole();
         } catch (err) {
             console.error("Unable to connect to the Database:", (err as Error).message)
         }
     }
     //The database needs to have those role records available
-    private async seedRoles() {
-        if (!this.sequelize) return;
+    private async seedRoles(): Promise<void> {
+        try {
+            const RoleModel = this.sequelize.models.Role as typeof Role;
 
-        const RoleModel = this.sequelize.models.Role as typeof Role;
+            const roles = ["user", "moderator", "admin"];
 
-        const roles = ["user", "moderator", "admin"];
-
-        for (let i = 0; i < roles.length; i++) {
-            await RoleModel.findOrCreate({
-                where: { name: roles[i] },
-                defaults: { id: i + 1, name: roles[i] },
-            });
+            for (let i = 0; i < roles.length; i++) {
+                await RoleModel.findOrCreate({
+                    where: { name: roles[i] },
+                    defaults: { id: i + 1, name: roles[i] },
+                });
+            }
+            console.log("Roles table seeded.");
+        } catch (err) {
+            console.error("Roles Table Seeding failed:", (err as Error).message);
         }
+    }
 
-        console.log("Roles table seeded.");
+    private async seedUsers(): Promise<void> {
+        console.log("seedUsers = >");
+        try {
+            const UserModel = this.sequelize.models.User as typeof User;
+
+            await UserModel.findOrCreate({
+                where: { username: "stephen1" },
+                defaults: {
+                    id: 1,
+                    name: "stephen",
+                    username: "stephen1",
+                    email: "stephen@email.com",
+                    password: "stephen123",
+                    phone: 80,
+                    website: "http://www.stephen.com"
+                }
+            });
+            console.log("Users seeded.");
+        } catch (err) {
+            console.error("Users Table Seeding failed:", (err as Error).message);
+        }
+    }
+
+    private async seedUserRole(): Promise<void> {
+        try {
+            const UserRoleModel = this.sequelize.models.UserRole as typeof UserRole;
+
+            await UserRoleModel.findOrCreate({
+                where: { userId: 1 },
+                defaults: {
+                    userId: 1,
+                    roleId: 1
+                }
+            });
+            console.log("UserRole seeded.");
+        } catch (err) {
+            console.error("UserRole Table Seeding failed:", (err as Error).message);
+        }
     }
 }
 

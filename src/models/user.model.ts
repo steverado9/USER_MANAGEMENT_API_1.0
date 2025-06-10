@@ -5,7 +5,7 @@ import UserRole from "./userRole.model";
 @Table({
     tableName: "users",
 })
-export default class User extends Model {
+export default class User extends Model { 
     @Column({
         type: DataType.INTEGER,
         primaryKey: true,
@@ -31,7 +31,7 @@ export default class User extends Model {
     @Column({
         type: DataType.STRING(255),
         field: "email",
-        allowNull: false
+        allowNull: false  
     })
     email!: string;
 
@@ -49,10 +49,10 @@ export default class User extends Model {
     address?: Record<string, any> //this is a way of writing object in typescript
 
     @Column({
-        type: DataType.STRING(255),
+        type: DataType.INTEGER,
         field: "phone"
     })
-    phone?: string;
+    phone?: number;
 
     @Column({
         type: DataType.STRING(255),

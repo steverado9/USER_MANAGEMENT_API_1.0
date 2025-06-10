@@ -1,9 +1,6 @@
 add authorization to update and delete
 only an admin can update and delete 
-move confiSecrete to environment variable
-seed an admin and a user
 deploy
 remember to add force true before i deploy
-attributes: { exclude: ['baz'] },
 search console.log and remove them
 
